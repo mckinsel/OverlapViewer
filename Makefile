@@ -45,3 +45,8 @@ all: $(LIB_OBJECTS) $(EXE_OBJECTS) $(TARGETS)
 
 overlap_view: $(LIB_OBJECTS) overlap_view.o
 	$(CXX) $^ -o $@ $(LDFLAGS)
+
+clean:
+	rm -f $(EXE_OBJECTS)
+	rm -f $(LIB_OBJECTS)
+	rm -f $(TARGETS)
