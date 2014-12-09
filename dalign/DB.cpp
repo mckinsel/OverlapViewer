@@ -1138,7 +1138,7 @@ void Read_All_Sequences(HITS_DB *db, int ascii)
     rewind(bases);
 
   seq = (char *) Malloc(db->totlen+nreads+4,"Allocating All Sequence Reads");
-  fprintf(stderr, "Allocating %ld bytes for seq.\n", db->totlen+nreads+4);
+  fprintf(stderr, "Allocating %ld bytes for seq.\n", (long int)db->totlen+nreads+4);
   *seq++ = 4;
 
   if (ascii == 1)

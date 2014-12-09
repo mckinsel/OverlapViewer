@@ -1,4 +1,4 @@
-CA_DIR=../../wgs-8.1
+CA_DIR=../../celera_assembler_replacement/wgs-8.1
 
 # A bunch of stuff from the Celera Assembler Makefile
 LDFLAGS= -D_GLIBCXX_PARALLEL -fopenmp -pthread -lm -lz -L $(CA_DIR)/Linux-amd64/lib -lCA
@@ -33,7 +33,7 @@ INC_DIRS = $(patsubst %, -I%, \ $(strip $(INC_IMPORT_DIRS)))
 
 CXXFLAGS+=$(INC_DIRS)
 
-LIB_SOURCES = CAReader.cpp Overlap.cpp OverlapPrinter.cpp
+LIB_SOURCES = CAReader.cpp Overlap.cpp OverlapPrinter.cpp dalign/DB.cpp dalign/QV.cpp dalign/align.cpp
 EXE_SOURCES = overlap_view.cpp
 
 LIB_OBJECTS = $(patsubst %.cpp,%.o,$(strip $(LIB_SOURCES))) 
