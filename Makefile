@@ -33,7 +33,7 @@ INC_DIRS = $(patsubst %, -I%, \ $(strip $(INC_IMPORT_DIRS)))
 
 CXXFLAGS+=$(INC_DIRS)
 
-LIB_SOURCES = CAReader.cpp Overlap.cpp OverlapPrinter.cpp dalign/DB.cpp dalign/QV.cpp dalign/align.cpp
+LIB_SOURCES = CAReader.cpp LASReader.cpp Overlap.cpp OverlapPrinter.cpp dalign/DB.cpp dalign/QV.cpp dalign/align.cpp
 EXE_SOURCES = overlap_view.cpp
 
 LIB_OBJECTS = $(patsubst %.cpp,%.o,$(strip $(LIB_SOURCES))) 
