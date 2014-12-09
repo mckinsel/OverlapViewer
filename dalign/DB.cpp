@@ -596,7 +596,7 @@ void Trim_DB(HITS_DB *db)
   db->trimmed = 1;
 
   if (j < nreads)
-    db->reads = Realloc(reads,sizeof(HITS_READ)*(j+1),NULL);
+    db->reads = (HITS_READ*)Realloc(reads,sizeof(HITS_READ)*(j+1),NULL);
 }
 
 // Shut down an open 'db' by freeing all associated space, including tracks and QV structures, 

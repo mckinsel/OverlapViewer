@@ -54,6 +54,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define __STDC_LIMIT_MACROS
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
@@ -1715,7 +1716,7 @@ static char ToU[8] = { 'A', 'C', 'G', 'T', '.', '[', ']', '-' };
 void Print_Alignment(FILE *file, Alignment *align, Work_Data *ework,
                      int indent, int width, int border, int upper, int coord)
 { _Work_Data *work  = (_Work_Data *) ework;
-  int        *trace = align->path->trace;
+  int        *trace = (int*)align->path->trace;
   int         tlen  = align->path->tlen;
 
   char *Abuf, *Bbuf, *Dbuf;
@@ -1953,7 +1954,7 @@ void Print_Alignment(FILE *file, Alignment *align, Work_Data *ework,
 void Print_Reference(FILE *file, Alignment *align, Work_Data *ework,
                      int indent, int block, int border, int upper, int coord)
 { _Work_Data *work  = (_Work_Data *) ework;
-  int        *trace = align->path->trace;
+  int        *trace = (int*)align->path->trace;
   int         tlen  = align->path->tlen;
 
   char *Abuf, *Bbuf, *Dbuf;

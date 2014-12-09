@@ -1107,14 +1107,14 @@ void Write_QVcoding(FILE *output, QVcoding *coding)
 
   //   Write out the scheme tables
 
-  Write_Scheme(coding->delScheme,output);
+  Write_Scheme((HScheme*)coding->delScheme,output);
   if (coding->delChar >= 0)
-    Write_Scheme(coding->dRunScheme,output);
-  Write_Scheme(coding->insScheme,output);
-  Write_Scheme(coding->mrgScheme,output);
-  Write_Scheme(coding->subScheme,output);
+    Write_Scheme((HScheme*)coding->dRunScheme,output);
+  Write_Scheme((HScheme*)coding->insScheme,output);
+  Write_Scheme((HScheme*)coding->mrgScheme,output);
+  Write_Scheme((HScheme*)coding->subScheme,output);
   if (coding->subChar >= 0)
-    Write_Scheme(coding->sRunScheme,output);
+    Write_Scheme((HScheme*)coding->sRunScheme,output);
 }
 
   // Read the encoding scheme 'coding' to 'output'
@@ -1214,11 +1214,11 @@ void Compress_Next_QVentry(FILE *input, FILE *output, QVcoding *coding, int loss
     }
 
   if (coding->delChar < 0)
-    { Encode(coding->delScheme, output, (uint8 *) Read, rlen);
+    { Encode((HScheme*)coding->delScheme, output, (uint8 *) Read, rlen);
       clen = rlen;
     }
   else
-    { Encode_Run(coding->delScheme, coding->dRunScheme, output,
+    { Encode_Run((HScheme*)coding->delScheme, (HScheme*)coding->dRunScheme, output,
                  (uint8 *) Read, rlen, coding->delChar);
       clen = Pack_Tag(Read+Rmax,Read,rlen,coding->delChar);
     }
@@ -1237,12 +1237,12 @@ void Compress_Next_QVentry(FILE *input, FILE *output, QVcoding *coding, int loss
         }
     }
 
-  Encode(coding->insScheme, output, (uint8 *) (Read+2*Rmax), rlen);
-  Encode(coding->mrgScheme, output, (uint8 *) (Read+3*Rmax), rlen);
+  Encode((HScheme*)coding->insScheme, output, (uint8 *) (Read+2*Rmax), rlen);
+  Encode((HScheme*)coding->mrgScheme, output, (uint8 *) (Read+3*Rmax), rlen);
   if (coding->subChar < 0)
-    Encode(coding->subScheme, output, (uint8 *) (Read+4*Rmax), rlen);
+    Encode((HScheme*)coding->subScheme, output, (uint8 *) (Read+4*Rmax), rlen);
   else
-    Encode_Run(coding->subScheme, coding->sRunScheme, output,
+    Encode_Run((HScheme*)coding->subScheme, (HScheme*)coding->sRunScheme, output,
                (uint8 *) (Read+4*Rmax), rlen, coding->subChar);
 }
 
@@ -1252,7 +1252,7 @@ void Uncompress_Next_QVentry(FILE *input, char **entry, QVcoding *coding, int rl
   //  Decode each stream and write to output
 
   if (coding->delChar < 0)
-    { Decode(coding->delScheme, input, entry[0], rlen);
+    { Decode((HScheme*)coding->delScheme, input, entry[0], rlen);
       clen = rlen;
       tlen = COMPRESSED_LEN(clen);
       if (tlen > 0)
@@ -1263,7 +1263,7 @@ void Uncompress_Next_QVentry(FILE *input, char **entry, QVcoding *coding, int rl
       Lower_Read(entry[1]);
     }
   else
-    { Decode_Run(coding->delScheme, coding->dRunScheme, input,
+    { Decode_Run((HScheme*)coding->delScheme, (HScheme*)coding->dRunScheme, input,
                  entry[0], rlen, coding->delChar);
       clen = Packed_Length(entry[0],rlen,coding->delChar);
       tlen = COMPRESSED_LEN(clen);
@@ -1276,13 +1276,13 @@ void Uncompress_Next_QVentry(FILE *input, char **entry, QVcoding *coding, int rl
       Unpack_Tag(entry[1],clen,entry[0],rlen,coding->delChar);
     }
 
-  Decode(coding->insScheme, input, entry[2], rlen);
+  Decode((HScheme*)coding->insScheme, input, entry[2], rlen);
 
-  Decode(coding->mrgScheme, input, entry[3], rlen);
+  Decode((HScheme*)coding->mrgScheme, input, entry[3], rlen);
 
   if (coding->subChar < 0)
-    Decode(coding->subScheme, input, entry[4], rlen);
+    Decode((HScheme*)coding->subScheme, input, entry[4], rlen);
   else
-    Decode_Run(coding->subScheme, coding->sRunScheme, input,
+    Decode_Run((HScheme*)coding->subScheme, (HScheme*)coding->sRunScheme, input,
                entry[4], rlen, coding->subChar);
 }
