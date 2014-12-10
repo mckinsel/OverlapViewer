@@ -15,8 +15,8 @@ void create_id_to_name(std::string db_name, std::map<int, std::string>* id_to_na
   
   int nfiles, last;
   char  prolog[1000], fname[1000];
-  fscanf(dbfile,DB_NFILE,&nfiles);
-  fscanf(dbfile,DB_FDATA,&last,fname,prolog);
+  if(fscanf(dbfile,DB_NFILE,&nfiles) != 1) SYSTEM_ERROR;
+  if(fscanf(dbfile,DB_FDATA,&last,fname,prolog) != 3) SYSTEM_ERROR;
 
   HITS_READ  *reads;
   int         i, fcount, nblock, ireads, breads;
@@ -39,22 +39,23 @@ void create_id_to_name(std::string db_name, std::map<int, std::string>* id_to_na
     len   = r->end - r->beg;
     flags = r->flags;
 
-    ireads += 1;
-    breads += 1;
-    totlen += len;
-    
-    if (totlen >= size || ireads >= READMAX) {
-      ireads = 0;
-      totlen = 0;
-      nblock += 1;
-    }
-    
-    char full_name[1000];
-    sprintf(full_name, "%s/%d/%d_%d", prolog, r->origin, r->beg, r->end); 
-    (*id_to_name)[breads] = full_name;
+    if (len >= db->cutoff && (flags & DB_BEST) != 0) {
+      ireads += 1;
+      breads += 1;
+      totlen += len;
+      
+      if (totlen >= size || ireads >= READMAX) {
+        ireads = 0;
+        totlen = 0;
+        nblock += 1;
+      }
+      char full_name[1000];
+      sprintf(full_name, "%s/%d/%d_%d", prolog, r->origin, r->beg, r->end); 
+      (*id_to_name)[breads] = full_name;
+    } 
 
     if (i+1 >= last && ++fcount < nfiles) {
-      fscanf(dbfile,DB_FDATA,&last,fname,prolog);
+      if(fscanf(dbfile,DB_FDATA,&last,fname,prolog) != 3) SYSTEM_ERROR;
     }
   } 
   
@@ -79,8 +80,8 @@ void LASReader_create_ovl_list(std::string las_name, std::string db_name,
   input = Fopen(c_las_name, "r");
   free(c_las_name);
 
-  fread(&novl,sizeof(int64),1,input);
-  fread(&tspace,sizeof(int),1,input);
+  if(fread(&novl,sizeof(int64),1,input) != 1) SYSTEM_ERROR;
+  if(fread(&tspace,sizeof(int),1,input) != 1) SYSTEM_ERROR;
 
   if (tspace <= TRACE_XOVR) { small  = 1;
     tbytes = sizeof(uint8);
@@ -105,8 +106,8 @@ void LASReader_create_ovl_list(std::string las_name, std::string db_name,
 
     Overlap_T over = {"","",0,0,0,0,0,0,false};
 
-    over.name_a = id_to_name[ovl->aread];
-    over.name_b = id_to_name[ovl->bread];
+    over.name_a = id_to_name.at(ovl->aread + 1);
+    over.name_b = id_to_name.at(ovl->bread + 1);
     over.start_a = ovl->path.abpos;
     over.start_b = ovl->path.bbpos;
     over.end_a = ovl->path.aepos;
