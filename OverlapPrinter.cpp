@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <set>
 
-#define TOLERANCE 25
+// Amount overhang has to exceed to be noted
+// CA uses 15
+#define TOLERANCE 15
 
 typedef struct {
   int start; //Start and end wrt the base read, not the partner
@@ -97,7 +99,7 @@ void OverlapPrinter_format_overlap(const std::vector<Overlap_T>& ovl_list,
     int pre_chars  = (int)(ovl_print.start / bases_per_char);
     int ovl_chars  = (int)((ovl_print.end - ovl_print.start) / bases_per_char);
     int post_chars = (int)((read_length - ovl_print.end) / bases_per_char);
-    
+
     char ovl_char = ovl_print.forward ? '>' : '<'; 
     
     // Adjust the lengths to accomodate the overhang symbols 
