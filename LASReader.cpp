@@ -51,7 +51,9 @@ void create_id_to_name(std::string db_name, std::map<int, std::string>* id_to_na
       }
       char full_name[1000];
       sprintf(full_name, "%s/%d/%d_%d", prolog, r->origin, r->beg, r->end); 
-      (*id_to_name)[breads] = full_name;
+      (*id_to_name)[breads - 1] = full_name;
+      fprintf(stderr, "%d %s\n", breads, full_name);
+
     } 
 
     if (i+1 >= last && ++fcount < nfiles) {
@@ -106,16 +108,24 @@ void LASReader_create_ovl_list(std::string las_name, std::string db_name,
 
     Overlap_T over = {"","",0,0,0,0,0,0,false};
 
-    over.name_a = id_to_name.at(ovl->aread + 1);
-    over.name_b = id_to_name.at(ovl->bread + 1);
+    over.name_a = id_to_name.at(ovl->aread);
+    over.name_b = id_to_name.at(ovl->bread);
     over.start_a = ovl->path.abpos;
     over.start_b = ovl->path.bbpos;
     over.end_a = ovl->path.aepos;
     over.end_b = ovl->path.bepos;
     over.length_a = ovl->alen;
     over.length_b = ovl->blen;
-    over.forward = !COMP(ovl->flags);
     
+    over.forward = !COMP(ovl->flags);
+
+    if(COMP(ovl->flags)) {
+      int orig_start_b = over.start_b;
+      int orig_end_b = over.end_b;
+      over.start_b = over.length_b - orig_end_b;
+      over.end_b = over.length_b - orig_start_b;
+    }
+
     ovl_list->push_back(over);
   }
   
