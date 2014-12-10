@@ -114,7 +114,7 @@ void LASReader_create_ovl_list(std::string las_name, std::string db_name,
     over.end_b = ovl->path.bepos;
     over.length_a = ovl->alen;
     over.length_b = ovl->blen;
-    over.forward = COMP(ovl->flags);
+    over.forward = !COMP(ovl->flags);
     
     ovl_list->push_back(over);
   }
